@@ -17,9 +17,6 @@ MQTT_IP_ADDR = "localhost"
 MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
-REMOTE_ADDR = 'http://hd1.freebox.fr/pub/remote_control?code='
-
-
 class jeedomInteraction(object):
     """Class used to wrap action code with mqtt connection
 
