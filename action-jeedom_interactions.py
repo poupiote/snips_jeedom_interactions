@@ -1,6 +1,5 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-
 import requests
 import time
 from snipsTools import SnipsConfigParser
@@ -19,7 +18,7 @@ MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
 class jeedomInteraction(object):
     """Class used to wrap action code with mqtt connection
-    
+        
         Please change the name refering to your application
     """
 
@@ -30,52 +29,40 @@ class jeedomInteraction(object):
         except :
             self.config = None
 
-
         # start listening to MQTT
         self.start_blocking()
-
-    def askjeedomInteractions_callback(self, hermes, intent_message):
-        # terminate the session first if not continue
-
-        print "Lancement de l'application jeedomInteractions"
-        hermes.publish_end_session(intent_message.session_id, "")
-
-        jeedomInteraction = None
-   
-        print '[Recep] intent value: {}'.format(intent_message.slots.Interaction.first().value)
-
-        #if intent_message.slots.TvChannel.first().value == 'oncle':
-            #print '[Received] intent: {}'.format(intent_message.slots.TvChannel)
-        jeedomInteraction = intent_message.slots.Interaction.first().value
-        #subcommandeFreebox = intent_message.slots.TvSubCommand.first().value
-
-        if jeedomInteraction is None:
-           Interaction_msg = "Interaction inexistante"
-        #else:
-
+        
         jeedomAPIKEY = self.config.get("secret").get("jeedomAPIKEY")
         jeedomIP = self.config.get("secret").get("jeedomIP")
-
-
-        self.callInteraction(jeedomAPIKEY,jeedomIP)
-    def callInteraction(self,jeedomIP,jeedomAPIKEY):
+ 
+        
+    # --> Sub callback function, one per intent
+    def interaction_callback(self, hermes, intent_message):
+        # terminate the session first if not continue
+        hermes.publish_end_session(intent_message.session_id, "")
+        
+        # action code goes here...
+        print '[Received] intent: {}'.format(intent_message.intent.intent_name)
         requests.get('http://'+jeedomIP+'/core/api/jeeApi.php?apikey='+jedoomAPIKEY+'&type=interact&query='+jeedomInteraction)
-#http://#IP_JEEDOM#/core/api/jeeApi.php?apikey='+jedoomAPIKEY+&type=interact&query=#QUERY#
+        # if need to speak the execution result by tts
+        hermes.publish_start_session_notification(intent_message.site_id, "Action1 has been done", "")    
+    
+    
+    # More callback function goes here...
 
     # --> Master callback function, triggered everytime an intent is recognized
-    def jeedomInteraction_callback(self,hermes, intent_message):
+    def master_intent_callback(self,hermes, intent_message):
         coming_intent = intent_message.intent.intent_name
+        if coming_intent == 'sscsieg:interaction':
+            self.interaction_callback(hermes, intent_message)
 
-        print '[Recept] intent {}'.format(coming_intent)
-       #if coming_intent == 'Tarlak:ChannelFreebox':
-            self.jeedomInteraction_callback(hermes, intent_message)
+
         # more callback and if condition goes here...
 
     # --> Register callback function and start MQTT
     def start_blocking(self):
         with Hermes(MQTT_ADDR) as h:
-            h.subscribe_intents(self.jeedomInteraction_callback).start()
+            h.subscribe_intents(self.master_intent_callback).start()
 
-            print "jeedom Interaction"
 if __name__ == "__main__":
     jeedomInteraction()
