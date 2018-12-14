@@ -19,7 +19,7 @@ MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
 class jeedomInteraction(object):
     """Class used to wrap action code with mqtt connection
-
+    
         Please change the name refering to your application
     """
 
@@ -76,5 +76,6 @@ class jeedomInteraction(object):
         with Hermes(MQTT_ADDR) as h:
             h.subscribe_intents(self.jeedomInteraction_callback).start()
 
+            print "jeedom Interaction"
 if __name__ == "__main__":
     jeedomInteraction()
