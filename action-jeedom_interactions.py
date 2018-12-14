@@ -54,7 +54,7 @@ class jeedomInteraction(object):
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self,hermes, intent_message):
         coming_intent = intent_message.intent.intent_name
-        if coming_intent == 'sscsieg:interaction':
+        if coming_intent == 'sscsieg:actions':
             self.interaction_callback(hermes, intent_message)
 
 
