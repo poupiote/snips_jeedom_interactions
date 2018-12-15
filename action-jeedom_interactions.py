@@ -6,7 +6,8 @@ from snipsTools import SnipsConfigParser
 from hermes_python.hermes import Hermes
 from hermes_python.ontology import *
 import io
-
+jeedomIP=None
+jeedomAPIKEY=None
 CONFIG_INI = "config.ini"
 
 # If this skill is supposed to run on the satellite,
@@ -42,7 +43,7 @@ class jeedomInteraction(object):
         jeedomIP = self.config.get("secret").get("jeedomIP")        
         # action code goes here...
         #print '[Received] intent: {}'.format(intent_message.intent.intent_name)
-        jeedomInteraction = intent_message.slots.interaction.first().value
+        #jeedomInteraction = intent_message.slots.interaction.first().value
         requests.get('http://'+jeedomIP+'/core/api/jeeApi.php?apikey='+jeedomAPIKEY+'&type=interact&query='+jeedomInteraction)
         # if need to speak the execution result by tts
         hermes.publish_start_session_notification(intent_message.site_id, "Action1 has been done", "")    
@@ -65,4 +66,8 @@ class jeedomInteraction(object):
             h.subscribe_intents(self.master_intent_callback).start()
 
 if __name__ == "__main__":
+    config = read_configuration_file("config.ini")
+    jeedomIP = config.get("secret").get("jeedomIP")
+    jeedomAPIKEY = config.get("secret").get("jeedomAPIKEY")
+   
     jeedomInteraction()
