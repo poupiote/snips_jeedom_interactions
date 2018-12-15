@@ -42,9 +42,9 @@ class jeedomInteraction(object):
         hermes.publish_end_session(intent_message.session_id, "")
         
         # action code goes here...
-        print '[Received] intent: {}'.format(intent_message.intent.intent_name)
+        #print '[Received] intent: {}'.format(intent_message.intent.intent_name)
         jeedomInteraction = intent_message.slots.interaction.first().value
-        requests.get('http://'+jeedomIP+'/core/api/jeeApi.php?apikey='+jedoomAPIKEY+'&type=interact&query='+jeedomInteraction)
+        requests.get('http://'+jeedomIP+'/core/api/jeeApi.php?apikey='+jeedomAPIKEY+'&type=interact&query='+jeedomInteraction)
         # if need to speak the execution result by tts
         hermes.publish_start_session_notification(intent_message.site_id, "Action1 has been done", "")    
     
