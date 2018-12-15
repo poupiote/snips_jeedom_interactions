@@ -31,16 +31,15 @@ class jeedomInteraction(object):
 
         # start listening to MQTT
         self.start_blocking()
-        
-        jeedomAPIKEY = self.config.get("secret").get("jeedomAPIKEY")
-        jeedomIP = self.config.get("secret").get("jeedomIP")
- 
+
         
     # --> Sub callback function, one per intent
     def interaction_callback(self, hermes, intent_message):
         # terminate the session first if not continue
         hermes.publish_end_session(intent_message.session_id, "")
         
+        jeedomAPIKEY = self.config.get("secret").get("jeedomAPIKEY")
+        jeedomIP = self.config.get("secret").get("jeedomIP")        
         # action code goes here...
         #print '[Received] intent: {}'.format(intent_message.intent.intent_name)
         jeedomInteraction = intent_message.slots.interaction.first().value
@@ -54,7 +53,7 @@ class jeedomInteraction(object):
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self,hermes, intent_message):
         coming_intent = intent_message.intent.intent_name
-        if coming_intent == 'sscsieg:actions':
+        if coming_intent == 'sscsieg:interactions':
             self.interaction_callback(hermes, intent_message)
 
 
