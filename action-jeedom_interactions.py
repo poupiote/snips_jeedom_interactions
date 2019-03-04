@@ -42,7 +42,7 @@ class jeedomInteraction(object):
         jeedomAPIKEY = self.config.get("secret").get("jeedomAPIKEY")
         jeedomIP = self.config.get("secret").get("jeedomIP")        
         # action code goes here...
-        #print '[Received] intent: {}'.format(intent_message.intent.intent_name)
+        print '[Received] intent: {}'.format(intent_message.intent.intent_name)
         #jeedomInteraction = intent_message.slots.interaction.first().value
         requests.get('http://'+jeedomIP+'/core/api/jeeApi.php?apikey='+jeedomAPIKEY+'&type=interact&query='+jeedomInteraction)
         # if need to speak the execution result by tts
