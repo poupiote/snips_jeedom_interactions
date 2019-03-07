@@ -66,7 +66,7 @@ class jeedomInteraction(object):
             h.subscribe_intents(self.master_intent_callback).start()
 
 if __name__ == "__main__":
-    config = snipsConfigParser.read_configuration_file("config.ini")
+    config = SnipsConfigParser.read_configuration_file("config.ini")
     jeedomIP = config.get("secret").get("jeedomIP")
     jeedomAPIKEY = config.get("secret").get("jeedomAPIKEY")
    
