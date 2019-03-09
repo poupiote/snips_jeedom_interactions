@@ -1,5 +1,5 @@
 # Bindings for the hermes protocol
-hermes-python>=0.1.29
+hermes-python>=0.3.3
 future==0.16
 
 # More dependency goes here..
