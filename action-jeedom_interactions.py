@@ -69,5 +69,5 @@ if __name__ == "__main__":
     config = SnipsConfigParser.read_configuration_file("config.ini")
     jeedomIP = config.get("secret").get("jeedomIP")
     jeedomAPIKEY = config.get("secret").get("jeedomAPIKEY")
-   
+    print jeedomAPIKEY
     jeedomInteraction()
