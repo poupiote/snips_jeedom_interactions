@@ -1,73 +1,41 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import requests
-import time
-from snipsTools import SnipsConfigParser
+
+import configparser
 from hermes_python.hermes import Hermes
+from hermes_python.ffi.utils import MqttOptions
 from hermes_python.ontology import *
 import io
-jeedomIP=None
-jeedomAPIKEY=None
+
+CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
 
-# If this skill is supposed to run on the satellite,
-# please get this mqtt connection info from <config.ini>
-# Hint: MQTT server is always running on the master device
-MQTT_IP_ADDR = "localhost"
-MQTT_PORT = 1883
-MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
-
-class jeedomInteraction(object):
-    """Class used to wrap action code with mqtt connection
-        
-        Please change the name refering to your application
-    """
-
-    def __init__(self):
-        # get the configuration if needed
-        try:
-            self.config = SnipsConfigParser.read_configuration_file(CONFIG_INI)
-        except :
-            self.config = None
-
-        # start listening to MQTT
-        self.start_blocking()
-
-        
-    # --> Sub callback function, one per intent
-    def interaction_callback(self, hermes, intent_message):
-        # terminate the session first if not continue
-        hermes.publish_end_session(intent_message.session_id, "")
-        
-        jeedomAPIKEY = self.config.get("secret").get("jeedomAPIKEY")
-        jeedomIP = self.config.get("secret").get("jeedomIP")        
-        # action code goes here...
-        print '[Received] intent: {}'.format(intent_message.intent.intent_name)
-        #jeedomInteraction = intent_message.slots.interaction.first().value
-        requests.get('http://'+jeedomIP+'/core/api/jeeApi.php?apikey='+jeedomAPIKEY+'&type=interact&query='+jeedomInteraction)
-        # if need to speak the execution result by tts
-        hermes.publish_start_session_notification(intent_message.site_id, "Action1 has been done", "")    
-    
-    
-    # More callback function goes here...
-
-    # --> Master callback function, triggered everytime an intent is recognized
-    def master_intent_callback(self,hermes, intent_message):
-        coming_intent = intent_message.intent.intent_name
-        if coming_intent == 'sscsieg:interactions':
-            self.interaction_callback(hermes, intent_message)
+class SnipsConfigParser(configparser.SafeConfigParser):
+    def to_dict(self):
+        return {section : {option_name : option for option_name, option in self.items(section)} for section in self.sections()}
 
 
-        # more callback and if condition goes here...
+def read_configuration_file(configuration_file):
+    try:
+        with io.open(configuration_file, encoding=CONFIGURATION_ENCODING_FORMAT) as f:
+            conf_parser = SnipsConfigParser()
+            conf_parser.readfp(f)
+            return conf_parser.to_dict()
+    except (IOError, configparser.Error) as e:
+        return dict()
 
-    # --> Register callback function and start MQTT
-    def start_blocking(self):
-        with Hermes(MQTT_ADDR) as h:
-            h.subscribe_intents(self.master_intent_callback).start()
+def subscribe_intent_callback(hermes, intentMessage):
+    conf = read_configuration_file(CONFIG_INI)
+    action_wrapper(hermes, intentMessage, conf)
+
+
+def action_wrapper(hermes, intentMessage, conf):
+    {{#each action_code as |a|}}{{a}}
+    {{/each}}
+
 
 if __name__ == "__main__":
-    config = SnipsConfigParser.read_configuration_file("config.ini")
-    jeedomIP = config.get("secret").get("jeedomIP")
-    jeedomAPIKEY = config.get("secret").get("jeedomAPIKEY")
-    print jeedomAPIKEY
-    jeedomInteraction()
+    mqtt_opts = MqttOptions()
+    with Hermes(mqtt_options=mqtt_opts) as h:
+        h.subscribe_intent("{{intent_id}}", subscribe_intent_callback) \
+         .start()   
