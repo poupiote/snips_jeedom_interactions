@@ -30,12 +30,20 @@ def subscribe_intent_callback(hermes, intentMessage):
 
 
 def action_wrapper(hermes, intentMessage, conf):
-    {{#each action_code as |a|}}{{a}}
-    {{/each}}
+    jeedomAPIKEY = self.config.get("secret").get("jeedomAPIKEY")
+    jeedomIP = self.config.get("secret").get("jeedomIP")        
+    # action code goes here...
+    print '[Received] intent: {}'.format(intentMessage.intent.intent_name)
+    jeedomInteraction = intentMessage.slots.interaction.first().value
+    requests.get('http://'+jeedomIP+'/core/api/jeeApi.php?apikey='+jeedomAPIKEY+'&type=interact&query='+jeedomInteraction)
+    # if need to speak the execution result by tts
+    hermes.publish_start_session_notification(intentMessage.site_id, "Action1 has been done", "")    
+    #{{#each action_code as |a|}}{{a}}
+    #{{/each}}
 
 
 if __name__ == "__main__":
     mqtt_opts = MqttOptions()
     with Hermes(mqtt_options=mqtt_opts) as h:
-        h.subscribe_intent("{{intent_id}}", subscribe_intent_callback) \
+        h.subscribe_intent("ssc:interactions", subscribe_intent_callback) \
          .start()   
