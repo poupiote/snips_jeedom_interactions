@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import configparser
@@ -46,4 +46,7 @@ if __name__ == "__main__":
     mqtt_opts = MqttOptions()
     with Hermes(mqtt_options=mqtt_opts) as h:
         h.subscribe_intent("ssc:interactions", subscribe_intent_callback) \
-         .start()   
+         .start()
+
+
+
