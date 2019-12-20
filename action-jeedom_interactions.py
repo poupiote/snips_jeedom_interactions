@@ -38,7 +38,7 @@ def action_wrapper(hermes, intentMessage, conf):
     jeedomInteraction = intentMessage.slots.interaction.first().value
     requests.get('http://'+jeedomIP+'/core/api/jeeApi.php?apikey='+jeedomAPIKEY+'&type=interact&query='+jeedomInteraction)
     # if need to speak the execution result by tts
-    hermes.publish_start_session_notification(intentMessage.site_id, "Action1 has been done", "")    
+    hermes.publish_start_session_notification(intentMessage.site_id, "Action1 a été exécutée", "")    
     #{{#each action_code as |a|}}{{a}}
     #{{/each}}
 
