@@ -6,7 +6,10 @@ import request
 from hermes_python.hermes import Hermes
 from hermes_python.ffi.utils import MqttOptions
 from hermes_python.ontology import *
+from hermes_python.ontology.slot import *
 import io
+import time
+import json
 
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
